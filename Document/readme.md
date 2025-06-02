@@ -1,1 +1,1 @@
-project report in doucument format
+project report in document format
