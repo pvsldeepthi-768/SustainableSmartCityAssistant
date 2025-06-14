@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .hero {
+    background: linear-gradient(135deg, #0077cc 0%, #004a99 100%);
+    color: white;
+    padding: 4rem 2rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+    margin-bottom: 3rem;
+  }
+  .hero h2 {
+    font-size: 3rem;
+    margin-bottom: 0.7rem;
+    font-weight: 700;
+  }
+  .hero p {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+  .btn-primary {
+    background-color: #ff9933;
+    color: white;
+    padding: 1rem 2.5rem;
+    font-weight: 700;
+    font-size: 1.2rem;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 12px rgb(255 153 51 / 0.6);
+  }
+  .btn-primary:hover {
+    background-color: #cc7a29;
+    box-shadow: 0 6px 14px rgb(204 122 41 / 0.8);
+  }
+
+  .features {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+  .feature-card {
+    background-color: white;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.1);
+    padding: 2rem;
+    flex: 1 1 280px;
+    max-width: 320px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  .feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.15);
+  }
+  .feature-card h3 {
+    color: #0077cc;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+  .feature-card p {
+    font-size: 1.1rem;
+    color: #444;
+    line-height: 1.5;
+  }
+</style>
+
+<div class="hero">
+  <h2>Welcome to the Eco Visioner</h2>
+  <p>Your AI-powered partner for smarter, greener urban living.<br>Making Sustainable Smart City.</p>
+  <a href="/assistant" class="btn-primary">Ask a Question Now</a>
+</div>
+
+<section>
+  <h2 style="text-align:center; margin-bottom: 2rem; color:#004a99; font-weight: 700;">Key Features</h2>
+  <div class="features">
+    <div class="feature-card">
+      <h3>Smart Energy Insights</h3>
+      <p>Get expert advice on sustainable energy practices to optimize city resources efficiently.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Real-time Alerts</h3>
+      <p>Stay updated with instant notifications about environmental changes and city policies.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Interactive Dashboard</h3>
+      <p>Visualize city data and track sustainability metrics through user-friendly dashboards.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

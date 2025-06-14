@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .policy-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  h1 {
+    color: #003366;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .policy-card {
+    background: #fff;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    border-radius: 14px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
+  }
+  .policy-card:hover {
+    transform: translateY(-5px);
+  }
+  .policy-title {
+    font-size: 1.3rem;
+    color: #004a99;
+    margin-bottom: 0.6rem;
+  }
+  .policy-desc {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 1rem;
+  }
+  .policy-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #777;
+  }
+  .policy-footer a {
+    text-decoration: none;
+    color: #007bff;
+  }
+</style>
+
+<div class="policy-container">
+  <h1>City Policies & Regulations</h1>
+  <div id="policies-list">
+    <p>Loading policies...</p>
+  </div>
+</div>
+
+<script>
+  async function fetchPolicies() {
+    try {
+      const response = await fetch('/api/policy/policies/all-details');
+      if (!response.ok) throw new Error('Failed to fetch policies');
+      const policies = await response.json();
+
+      const container = document.getElementById('policies-list');
+      container.innerHTML = '';
+
+      if (policies.length === 0) {
+        container.innerHTML = '<p>No policies available at the moment.</p>';
+        return;
+      }
+
+      policies.forEach(policy => {
+        const policyDiv = document.createElement('div');
+        policyDiv.className = 'policy-card';
+
+        policyDiv.innerHTML = `
+          <div class="policy-title">${policy.policy_name}</div>
+          <div class="policy-desc">${policy.description}</div>
+          <div class="policy-footer">
+            <div>Issued: ${new Date(policy.issued_date).toLocaleDateString()}</div>
+            <a href="${policy.document_url}" target="_blank">View Document</a>
+          </div>
+        `;
+
+        container.appendChild(policyDiv);
+      });
+    } catch (error) {
+      const container = document.getElementById('policies-list');
+      container.innerHTML = '<p>Unable to load policies at the moment.</p>';
+      console.error(error);
+    }
+  }
+
+  fetchPolicies();
+</script>
+{% endblock %}

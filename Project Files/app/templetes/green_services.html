@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  #map {
+    height: 600px;
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 12px;
+  }
+  .search-bar {
+    margin-bottom: 16px;
+  }
+  input[type="text"] {
+    padding: 8px;
+    font-size: 16px;
+    width: 300px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+</style>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search by name or type..." />
+</div>
+
+<div id="map"></div>
+
+<script>
+  let map;
+  let markers = [];
+
+  function initMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: 17.385044, lng: 78.486671 },
+      zoom: 13,
+    });
+
+    fetch("/api/green_services/services/list")
+      .then(response => response.json())
+      .then(data => {
+        markers = data.map(service => {
+          const marker = new google.maps.Marker({
+            position: { lat: service.latitude, lng: service.longitude },
+            map,
+            title: `${service.name} (${service.type})`,
+          });
+
+          const infoWindow = new google.maps.InfoWindow({
+            content: `<strong>${service.name}</strong><br>${service.type}<br>${service.location}`,
+          });
+
+          marker.addListener("click", () => {
+            infoWindow.open(map, marker);
+          });
+
+          return { marker, service };
+        });
+      });
+
+    document.getElementById("searchInput").addEventListener("input", function () {
+      const query = this.value.toLowerCase();
+      markers.forEach(({ marker, service }) => {
+        const match = service.name.toLowerCase().includes(query) || service.type.toLowerCase().includes(query);
+        marker.setVisible(match);
+      });
+    });
+  }
+</script>
+
+<!-- Replace YOUR_API_KEY with your actual Google Maps API key -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWRRJBO1oq5kUhjF09j7WMfwe3KgFPFXM&callback=initMap"
+async defer></script>
+{% endblock %}

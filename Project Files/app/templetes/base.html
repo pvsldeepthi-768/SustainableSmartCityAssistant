@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title if title else "Eco Vision" }}</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      background-color: #95c3e1;
+      color: #222;
+      line-height: 1.6;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Navbar */
+    nav {
+      background: linear-gradient(90deg, #005fa3, #0077cc);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 3px 6px rgb(0 0 0 / 0.1);
+    }
+    nav .logo {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1.2px;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.8rem;
+      margin: 0;
+      padding: 0;
+    }
+    nav ul li a {
+      color: #e0e8f0;
+      font-weight: 600;
+      padding: 0.5rem 0.8rem;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+    nav ul li a:hover,
+    nav ul li a.active {
+      background-color: #004a99;
+      color: #fff;
+    }
+
+    /* Main Content */
+    main {
+      max-width: 1100px;
+      margin: 2.5rem auto;
+      padding: 0 1.5rem;
+      min-height: 70vh;
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(90deg, #005fa3, #0077cc);
+      color: #f0f6ff;
+      text-align: center;
+      padding: 1rem 2rem;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      margin-top: 3rem;
+      user-select: none;
+    }
+    footer a {
+      color: #ffe0b3;
+      font-weight: 600;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">Eco Visioner</a>
+    <ul>
+      <li><a href="/" class="{{ 'active' if request.url.path == '/' else '' }}">Home</a></li>
+      <li><a href="/green_services" class="{{ 'active' if request.url.path.startswith('/green_services') else '' }}">Green services</a></li>
+      <li><a href="/assistant" class="{{ 'active' if request.url.path.startswith('/assistant') else '' }}">Assistant</a></li>
+      <li><a href="/dashboard" class="{{ 'active' if request.url.path.startswith('/dashboard') else '' }}">Dashboard</a></li>
+      <li><a href="/alerts" class="{{ 'active' if request.url.path.startswith('/alerts') else '' }}">Alerts</a></li>
+      <li><a href="/policy" class="{{ 'active' if request.url.path.startswith('/policy') else '' }}">Policy</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    &copy; 2025 Eco Vision — Developed with ❤️ by You
+  </footer>
+</body>
+</html>

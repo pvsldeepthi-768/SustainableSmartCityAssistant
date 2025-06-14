@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .alerts-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  h1 {
+    color: #003366;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .alert-card {
+    background: #ffffff;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    border-radius: 14px;
+    margin-bottom: 1.8rem;
+    display: flex;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+  .alert-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  }
+  .alert-image {
+    flex: 0 0 160px;
+    object-fit: cover;
+    border-top-left-radius: 14px;
+    border-bottom-left-radius: 14px;
+    width: 160px;
+    height: 160px;
+  }
+  .alert-content {
+    padding: 1.4rem 1.8rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .alert-title {
+    font-size: 1.3rem;
+    color: #004a99;
+    margin-bottom: 0.4rem;
+  }
+  .alert-desc {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 0.8rem;
+  }
+  .alert-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #777;
+  }
+  .alert-type {
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    color: white;
+  }
+  .alert-type.activity {
+    background-color: #28a745; /* green */
+  }
+  .alert-type.program {
+    background-color: #007bff; /* blue */
+  }
+  .alert-type.emergency {
+    background-color: #dc3545; /* red */
+  }
+</style>
+
+<div class="alerts-container">
+  <h1>Live Sustainable City Alerts</h1>
+  <div id="alerts-list">
+    <p>Loading alerts...</p>
+  </div>
+</div>
+
+<script>
+  async function fetchAlerts() {
+    try {
+      const response = await fetch('/api/alerts/alerts');
+      if (!response.ok) throw new Error('Failed to fetch alerts');
+      const alerts = await response.json();
+
+      const container = document.getElementById('alerts-list');
+      container.innerHTML = '';
+
+      if (alerts.length === 0) {
+        container.innerHTML = '<p>No alerts at the moment.</p>';
+        return;
+      }
+
+      alerts.forEach(alert => {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert-card';
+
+        const alertTypeClass = alert.type.toLowerCase();
+
+        alertDiv.innerHTML = `
+          <img src="${alert.image_url}" alt="${alert.title}" class="alert-image" />
+          <div class="alert-content">
+            <div>
+              <div class="alert-title">${alert.title}</div>
+              <div class="alert-desc">${alert.description}</div>
+            </div>
+            <div class="alert-footer">
+              <div class="alert-type ${alertTypeClass}">${alert.type}</div>
+              <div>${new Date(alert.timestamp).toLocaleString()}</div>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(alertDiv);
+      });
+    } catch (error) {
+      const container = document.getElementById('alerts-list');
+      container.innerHTML = '<p>Unable to load alerts at the moment.</p>';
+      console.error(error);
+    }
+  }
+
+  fetchAlerts();
+  setInterval(fetchAlerts, 30000); // Refresh every 30 seconds
+</script>
+{% endblock %}

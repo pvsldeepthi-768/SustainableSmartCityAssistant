@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #070a10;
+    color: #333;
+    background:#95c3e1
+  }
+
+  h1 {
+    color: #004a99;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .dashboard-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.8rem;
+  }
+
+  .card {
+    background: white;
+    padding: 1.8rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  }
+
+  .card h2 {
+    margin-bottom: 1rem;
+    color: #0077cc;
+    font-size: 1.4rem;
+  }
+
+  .metric-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #004a99;
+  }
+
+  .metric-subtext {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 0.3rem;
+  }
+
+  .sustainable-highlights {
+    background: #e6f2ff;
+    border-left: 6px solid #0077cc;
+    padding: 1.8rem 2rem;
+    margin-top: 3rem;
+    border-radius: 12px;
+  }
+  .sustainable-highlights h3 {
+    color: #004a99;
+    margin-bottom: 1.2rem;
+    font-size: 1.5rem;
+  }
+  .highlight-item {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: #333;
+  }
+</style>
+
+<div class="dashboard-container">
+  <h1>Sustainable Smart City Dashboard</h1>
+
+  <div class="metrics-grid" id="metrics-grid">
+    <!-- Metric cards will be inserted here by JS -->
+    <div class="card">
+      <h2>Loading Metrics...</h2>
+    </div>
+  </div>
+
+  <div class="sustainable-highlights">
+    <h3>Real-Time Sustainable Highlights</h3>
+    <div id="highlights-container">
+      <p>Loading latest sustainability highlights...</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function fetchMetrics() {
+    try {
+      const response = await fetch('/api/dashboard/metrics');
+      if (!response.ok) throw new Error('Network response not OK');
+      const data = await response.json();
+
+      const grid = document.getElementById('metrics-grid');
+      grid.innerHTML = '';
+
+      // Energy Card
+      const energy = data.energy;
+      const energyCard = document.createElement('div');
+      energyCard.className = 'card';
+      energyCard.innerHTML = `
+        <h2>Energy Consumption</h2>
+        <div class="metric-value">${energy.current_load_gw} GW</div>
+        <div class="metric-subtext">Current Load</div>
+        <div class="metric-value">${energy.renewable_share_pct}%</div>
+        <div class="metric-subtext">Renewable Share</div>
+        <div class="metric-value">${energy.peak_load_gw} GW</div>
+        <div class="metric-subtext">Peak Load</div>
+      `;
+      grid.appendChild(energyCard);
+
+      // Water Usage Card
+      const water = data.water;
+      const waterCard = document.createElement('div');
+      waterCard.className = 'card';
+      waterCard.innerHTML = `
+        <h2>Water Usage</h2>
+        <div class="metric-value">${water.reservoir_level_pct}%</div>
+        <div class="metric-subtext">Reservoir Level</div>
+        <div class="metric-value">${water.daily_usage_million_m3} M m³</div>
+        <div class="metric-subtext">Daily Usage</div>
+        <div class="metric-value">${water.smart_meter_coverage_pct}%</div>
+        <div class="metric-subtext">Smart Meter Coverage</div>
+      `;
+      grid.appendChild(waterCard);
+
+      // Green Coverage Card
+      const green = data.green;
+      const greenCard = document.createElement('div');
+      greenCard.className = 'card';
+      greenCard.innerHTML = `
+        <h2>Green Coverage</h2>
+        <div class="metric-value">${green.forest_cover_pct}%</div>
+        <div class="metric-subtext">Forest Cover</div>
+        <div class="metric-value">${green.urban_green_cover_pct}%</div>
+        <div class="metric-subtext">Urban Green Cover</div>
+        <div class="metric-value">${green.yearly_growth_pct}%</div>
+        <div class="metric-subtext">Yearly Growth</div>
+      `;
+      grid.appendChild(greenCard);
+
+    } catch (error) {
+      const grid = document.getElementById('metrics-grid');
+      grid.innerHTML = `<div class="card"><h2>Unable to load metrics</h2></div>`;
+      console.error("Fetch metrics error:", error);
+    }
+  }
+
+  async function fetchHighlights() {
+    try {
+      const response = await fetch('/api/dashboard/sustainable-highlights');
+      if (!response.ok) throw new Error('Network response not OK');
+      const highlights = await response.json();
+
+      const container = document.getElementById('highlights-container');
+      container.innerHTML = '';
+
+      highlights.forEach(item => {
+        const p = document.createElement('p');
+        p.className = 'highlight-item';
+        p.textContent = item;
+        container.appendChild(p);
+      });
+    } catch (error) {
+      const container = document.getElementById('highlights-container');
+      container.innerHTML = '<p>Unable to load sustainability highlights at the moment.</p>';
+      console.error("Fetch highlights error:", error);
+    }
+  }
+
+  // Initial fetch and periodic refresh every 30 seconds
+  fetchMetrics();
+  fetchHighlights();
+  setInterval(fetchMetrics, 30000);
+  setInterval(fetchHighlights, 30000);
+</script>
+{% endblock %}
